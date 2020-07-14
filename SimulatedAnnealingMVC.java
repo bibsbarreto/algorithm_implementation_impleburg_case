@@ -14,7 +14,7 @@ public class SimulatedAnnealingMVC {
     return this.matrix;
   }
 
-  // TODO: matrix_length+1
+  // TODO: matrix_length + 1
   public int get_valid_matix_number(int number, int matrix_length) {
     int new_number;
     if (number == matrix_length + 1) {
