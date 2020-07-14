@@ -1,5 +1,6 @@
 import java.util.Scanner;
 
+// Simulated Annealing Minimum Vertex Cover main class
 public class SAMVCMain {
 
   public static void main(String[] args) {

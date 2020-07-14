@@ -1,5 +1,6 @@
 import java.util.Random;
 
+// Simulated Annealing Minimum Vertex Cover
 public class SimulatedAnnealingMVC {
   int[][] matrix;
 
