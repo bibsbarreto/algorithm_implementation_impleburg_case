@@ -1,12 +1,12 @@
 # Algorithmic Implementation Impleburg Case
 
-# Bianca Ferreira da Frota Barreto
+## Bianca Ferreira da Frota Barreto
 
-# César Augusto Sampaio de Mello
+## César Augusto Sampaio de Mello
 
-# Special thanks:
+### Special thanks:
 
-### Dr. Henrique Mongelli
+#### Dr. Henrique Mongelli
 
 ---
 
