@@ -1,0 +1,5 @@
+# file types
+*.class
+
+# misc
+.DS_Store
