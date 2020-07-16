@@ -1,9 +1,12 @@
 import java.util.Random;
 
-// Simulated Annealing Minimum Vertex Cover
+/* Simulated Annealing Minimum Vertex Cover */
 public class SimulatedAnnealingMVC {
   int[][] matrix;
   int matrix_length;
+
+  int vertices;
+  int edges;
 
   double t_max;
   double k;
@@ -12,17 +15,11 @@ public class SimulatedAnnealingMVC {
 
   Random random = new Random();
 
-  public void set_matrix(int[][] matrix) {
-    this.matrix = matrix;
-  }
-
-  public int[][] get_matrix() {
-    return this.matrix;
-  }
-
-  public void initialize(int[][] matrix, double t_max, double k, double kt, double t_min) {
+  public void initialize(int[][] matrix, int vertices, int edges, double t_max, double k, double kt, double t_min) {
     this.matrix = matrix;
     this.matrix_length = matrix.length;
+    this.vertices = vertices;
+    this.edges = edges;
     this.t_max = t_max;
     this.k = k;
     this.kt = kt;
@@ -37,31 +34,31 @@ public class SimulatedAnnealingMVC {
 
     double T = this.t_max;
     double T_min = this.t_min;
-    int[] course = generate_course(this.matrix_length);
-    double aval_vc = avaluate_weight(course, this.matrix_length);
+    String vertices_mvc_solution = generate_course(this.matrix, this.edges);
+    int aval_cover = avaluate_cover(vertices_mvc_solution);
 
-    while (T >= T_min) {
-      while (i < this.kt) {
-        int[] neighboorhood = generate_neighboor(course);
-        double aval_vn = avaluate_weight(neighboorhood, this.matrix_length);
+    // while (T >= T_min) {
+    // while (i < this.kt) {
+    // int[] neighboorhood = generate_neighboor(course);
+    // double aval_vn = avaluate_cover(neighboorhood, this.matrix_length);
 
-        if (aval_vn < aval_vc) {
-          course = neighboorhood;
-        } else {
-          double e = (aval_vc - aval_vn) / T;
-          if (random.nextInt(1) < Math.exp(e)) {
-            course = neighboorhood;
-          }
-        }
+    // if (aval_vn < aval_cover) {
+    // course = neighboorhood;
+    // } else {
+    // double e = (aval_cover - aval_vn) / T;
+    // if (random.nextInt(1) < Math.exp(e)) {
+    // course = neighboorhood;
+    // }
+    // }
 
-        i = i + 1;
-      }
+    // i = i + 1;
+    // }
 
-      T = this.k * T;
-      t = t + 1;
+    // T = this.k * T;
+    // t = t + 1;
 
-      System.out.println("\nMelhor peso:    " + avaluate_weight(course, this.matrix_length));
-    }
+    System.out.println("\n\nMelhor peso:    " + avaluate_cover(vertices_mvc_solution));
+    // }
   }
 
   /*
@@ -80,97 +77,62 @@ public class SimulatedAnnealingMVC {
    * VC = V
    */
 
-  /*
-   * O que eu acho: não vai mais ser por peso, devemos avaliar o número de arestas
-   * que foram usadas (qnt menos, melhor)
-   * 
-   */
-  public double avaluate_weight(int[] course, int matrix_length) {
-    double sum = 0;
-    for (int x = 0; x < matrix_length; x++) {
-      if (!((x + 1) >= matrix_length)) {
-        sum = sum + matrix[course[x]][course[x + 1]];
-      } else {
-        sum = sum + matrix[matrix_length - 1][0];
-      }
-    }
-    return sum;
+  public int avaluate_cover(String vertices_solution) {
+    return vertices_solution.length();
   }
 
-  /*
-   * O que eu acho: pega um número aleatório, que vai ser o primeiro vértice,
-   * 
-   */
-  private int[] generate_course(int matrix_length) {
-    int[] course = new int[matrix_length];
-    int[] visited = new int[matrix_length];
-
-    for (int i = 0; i < visited.length; i++) {
-      visited[i] = 0;
-    }
-
-    int initial = random.nextInt(matrix_length - 1);
-    visited[initial] = 1;
+  private String generate_course(int[][] matrix, int edges) {
+    String min_vertices_solution = "";
+    System.out.println("1 - min_vertices_solution: " + min_vertices_solution);
+    int[] first_edge = new int[2];
+    int first_vertex = 0;
+    int edges_count = edges;
     int i = 0;
-    int origin = initial;
-    int destination = 0;
+    int j = 0;
+    int current_vertex = 0;
 
-    while (i < matrix_length - 1) {
-      destination = random.nextInt(matrix_length);
+    do {
+      /* Choose random edge */
+      do {
+        i = random.nextInt(matrix.length - 1); // 0
+        j = random.nextInt(matrix.length - 1); // 2
+        System.out.println("i: " + i);
+        System.out.println("j: " + j);
 
-      if (visited[destination] == 0) {
-        visited[destination] = 1;
-        course[i] = origin;
-        origin = destination;
-        i++;
+        first_edge[0] = i; // 0
+        first_edge[1] = j; // 2
+        first_vertex = matrix[i][j];
+        System.out.println("first_vertex: " + first_vertex);
+      } while (first_vertex == 1);
+
+      /* Choose random vertex from first_edge */
+      current_vertex = first_edge[0]; // 0
+
+      /* Adding current vertex to MVC solution */
+      min_vertices_solution = min_vertices_solution + current_vertex;
+      System.out.println("2 - min_vertices_solution: " + min_vertices_solution);
+
+      /* Choose random vertex from first_edge */
+      for (int k = 0; k < matrix.length; k++) {
+        if (matrix[current_vertex][k] == 1) {
+          matrix[current_vertex][k] = 0;
+          matrix[k][current_vertex] = 0;
+
+          edges_count = edges_count - 2; // Era isso o bug
+        }
       }
-    }
+    } while (edges_count > 0);
 
-    course[course.length - 1] = destination;
+    System.out.println("3 - min_vertices_solution: " + min_vertices_solution);
+    return min_vertices_solution;
+  }
+
+  // TODO
+  public int[] generate_neighboor(int[] course) {
     return course;
   }
 
-  /*
-   * O que eu acho: pegamos uma ordem de vértices olhando a matriz e adicionando
-   * os elementos que tem 1
-   * 
-   */
-  public int[] generate_neighboor(int[] course) {
-    double best_weight = 9999999;
-    int weight_i = 0;
-    int weight_j = 0;
-    int[] vc;
-    System.out.println();
-    System.out.println();
-    System.out.println();
-
-    for (int c = 0; c < course.length; c++) {
-      System.out.print(course[c] + " ");
-    }
-    System.out.print(course[0]);
-
-    System.out.println();
-    System.out.println();
-
-    for (int i = 0; i < course.length; i++) {
-      for (int j = 1; j < course.length; j++) {
-        vc = two_opt(course, i, j);
-        double weight = avaluate_weight(vc, vc.length);
-
-        if (weight <= best_weight) {
-          best_weight = weight;
-          weight_i = i;
-          weight_j = j;
-        }
-      }
-    }
-
-    int[] vn;
-    vn = two_opt(course, weight_i, weight_j);
-
-    return vn;
-  }
-
+  // TODO
   public int[] two_opt(int[] route, int i, int j) {
     int[] vn = new int[route.length];
 
@@ -190,15 +152,7 @@ public class SimulatedAnnealingMVC {
     return vn;
   }
 
-  // TODO: not working
-  public int get_valid_matix_number(int number, int matrix_length) {
-    int new_number;
-    // if (number == matrix_length + 1) {
-    // new_number = 0;
-    // } else {
-    new_number = number - 1;
-    // }
-
-    return new_number;
+  public int index_1_to_0(int number, int matrix_length) {
+    return number - 1;
   }
 }

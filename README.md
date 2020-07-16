@@ -27,8 +27,13 @@ Compiling:
 Running:
 `java SAMVCMain < edges_list_file vertices edges t_max k kt t_min`
 
-Example:
-`java SAMVCMain < test_cases/simple_graph.txt 6 8 10 0.95 20 5`
+Examples:
+
+- Simple graph:
+  `java SAMVCMain < test_cases/simple_graph.txt 6 8 10 0.95 20 5`
+
+- Case A1:
+  `java SAMVCMain < test_cases/case_1.txt 16 60 10 0.95 20 5`
 
 ---
 
