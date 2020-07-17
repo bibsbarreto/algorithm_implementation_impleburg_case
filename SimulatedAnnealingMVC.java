@@ -16,7 +16,8 @@ public class SimulatedAnnealingMVC {
   Random random = new Random();
 
   public void initialize(int[][] matrix, int vertices, int edges, double t_max, double k, double kt, double t_min) {
-    this.matrix = matrix;
+    this.matrix = new int[matrix.length][matrix.length];
+    copyMatrix(matrix, this.matrix);
     this.matrix_length = matrix.length;
     this.vertices = vertices;
     this.edges = edges;
@@ -26,6 +27,14 @@ public class SimulatedAnnealingMVC {
     this.t_min = t_min;
 
     simulate_anneal();
+  }
+
+  public void copyMatrix(int[][] matrix_copy, int[][] matrix_paste) {
+    for (int i = 0; i < matrix_copy.length; i++) {
+      for (int j = 0; j < matrix_copy.length; j++) {
+        matrix_paste[i][j] = matrix_copy[i][j];
+      }
+    }
   }
 
   private void simulate_anneal() {
@@ -57,71 +66,81 @@ public class SimulatedAnnealingMVC {
     // T = this.k * T;
     // t = t + 1;
 
-    System.out.println("\n\nMelhor peso:    " + avaluate_cover(vertices_mvc_solution));
+    System.out.println("\n\nCobertura mínima encontrada: " + avaluate_cover(vertices_mvc_solution));
     // }
   }
-
-  /*
-   * código do visualgo:
-   * 
-   * Assign arbitrary order to the edges
-   * 
-   * V = {}
-   * 
-   * foreach (edge e in edgeList)
-   * 
-   * Take one endpoint at random
-   * 
-   * Remove edges incident to the chosen endpoint
-   * 
-   * VC = V
-   */
 
   public int avaluate_cover(String vertices_solution) {
     return vertices_solution.length();
   }
 
-  private String generate_course(int[][] matrix, int edges) {
+  private String generate_course(int[][] matrix, int edges) { // 8
     String min_vertices_solution = "";
-    System.out.println("1 - min_vertices_solution: " + min_vertices_solution);
+    int[][] course_matrix = new int[matrix.length][matrix.length];
+    int course_matrix_length = course_matrix.length;
     int[] first_edge = new int[2];
     int first_vertex = 0;
-    int edges_count = edges;
+    int edges_count = edges; // 8
+    System.out.println("edges_count: " + edges_count + "\n\n");
     int i = 0;
     int j = 0;
     int current_vertex = 0;
 
-    do {
+    copyMatrix(matrix, course_matrix);
+
+    while (edges_count > 0) {
       /* Choose random edge */
-      do {
-        i = random.nextInt(matrix.length - 1); // 0
-        j = random.nextInt(matrix.length - 1); // 2
-        System.out.println("i: " + i);
-        System.out.println("j: " + j);
+      while (first_vertex == 0) {
+        i = random.nextInt(course_matrix_length - 1);
+        j = random.nextInt(course_matrix_length - 1);
+        System.out.println("course_matrix_length: " + course_matrix_length);
+        // System.out.println("i: " + i);
+        // System.out.println("j: " + j);
 
-        first_edge[0] = i; // 0
-        first_edge[1] = j; // 2
-        first_vertex = matrix[i][j];
+        first_edge[0] = i;
+        System.out.println("first_edge[0: " + first_edge[0]);
+        first_edge[1] = j;
+        System.out.println("first_edge[1: " + first_edge[1]);
+
+        first_vertex = course_matrix[i][j];
         System.out.println("first_vertex: " + first_vertex);
-      } while (first_vertex == 1);
-
-      /* Choose random vertex from first_edge */
-      current_vertex = first_edge[0]; // 0
+        for (int x = 0; x < course_matrix_length; x++) {
+          for (int y = 0; y < course_matrix_length; y++) {
+            System.out.print(matrix[i][j] + " ");
+          }
+          System.out.println();
+        }
+        System.out.println("first_vertex: " + first_vertex);
+      }
+      first_vertex = 0;
+      /* Choosing random vertex from first_edge */
+      current_vertex = first_edge[random.nextInt(1)];
+      System.out.println("\nfirst_edge[0]: " + first_edge[0]);
+      System.out.println("\nfirst_edge[1]: " + first_edge[1]);
 
       /* Adding current vertex to MVC solution */
-      min_vertices_solution = min_vertices_solution + current_vertex;
+      min_vertices_solution = min_vertices_solution + (current_vertex + 1); // passando para index 1
       System.out.println("2 - min_vertices_solution: " + min_vertices_solution);
 
-      /* Choose random vertex from first_edge */
-      for (int k = 0; k < matrix.length; k++) {
-        if (matrix[current_vertex][k] == 1) {
-          matrix[current_vertex][k] = 0;
-          matrix[k][current_vertex] = 0;
+      /* Choosing random edges from current_vertex */
+      for (int k = 0; k < course_matrix_length; k++) {
+        if (course_matrix[current_vertex][k] == 1) {
+          course_matrix[current_vertex][k] = 0;
+          edges_count = edges_count - 1;
+          System.out.println("\nREMOVENDO current_vertex: " + current_vertex);
+          System.out.println("REMOVENDO k: " + k + "\n");
+          System.out.println("edges_count: " + edges_count + "\n");
+        }
 
-          edges_count = edges_count - 2; // Era isso o bug
+        if (course_matrix[k][current_vertex] == 1) {
+          course_matrix[k][current_vertex] = 0;
+          System.out.println("REMOVENDO k: " + k);
+          System.out.println("REMOVENDO current_vertex: " + current_vertex + "\n");
+          System.out.println("edges_count: " + edges_count + "\n");
         }
       }
-    } while (edges_count > 0);
+      System.out.println("FINAL edges_count: " + edges_count + "\n");
+    }
 
     System.out.println("3 - min_vertices_solution: " + min_vertices_solution);
     return min_vertices_solution;
