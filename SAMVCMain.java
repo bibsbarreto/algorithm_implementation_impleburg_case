@@ -72,6 +72,8 @@ public class SAMVCMain {
       }
     }
 
+    System.out.println("\n\n------------------------------------\n");
+
     simulated_annealing.initialize(matrix, vertices, edges, t_max, k, kt, t_min);
     sc.close();
   }

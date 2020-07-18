@@ -5,6 +5,8 @@ public class SimulatedAnnealingMVC {
   int[][] matrix;
   int matrix_length;
 
+  int solutions = 0;
+
   int vertices;
   int edges;
 
@@ -45,7 +47,7 @@ public class SimulatedAnnealingMVC {
     double T_min = this.t_min;
     String vertices_mvc_solution_VC = generate_course(this.matrix, this.edges);
     int aval_cover_VC = avaluate_cover(vertices_mvc_solution_VC);
-    int aval_cover_VN;
+    int aval_cover_VN = 0;
 
     while (T >= T_min) {
       while (i < this.kt) {
@@ -66,22 +68,23 @@ public class SimulatedAnnealingMVC {
 
       T = this.k * T;
       t = t + 1;
-      System.out.println("\n\nCobertura mínima encontrada é a solução : " + aval_cover_VN);
     }
+
+    System.out.println("\n\nCobertura mínima encontrada é a solução: " + vertices_mvc_solution_VC);
+    System.out.println("Número de polos da solução: " + aval_cover_VN + "\n\n");
   }
 
   public int avaluate_cover(String vertices_solution) {
     return vertices_solution.length();
   }
 
-  private String generate_course(int[][] matrix, int edges) { // 8
+  private String generate_course(int[][] matrix, int edges) {
     String min_vertices_solution = "";
     int[][] course_matrix = new int[matrix.length][matrix.length];
     int course_matrix_length = course_matrix.length;
     int[] first_edge = new int[2];
     int first_vertex = 0;
-    int edges_count = edges; // 8
-    System.out.println("edges_count: " + edges_count + "\n\n");
+    int edges_count = edges;
     int i = 0;
     int j = 0;
     int current_vertex = 0;
@@ -95,14 +98,11 @@ public class SimulatedAnnealingMVC {
       while (first_vertex == 0) {
         i = random.nextInt(course_matrix_length);
         j = random.nextInt(course_matrix_length);
-        System.out.println("vertece i: " + i);
-        System.out.println("vertice  j: " + j);
 
         first_edge[0] = i;
         first_edge[1] = j;
 
         first_vertex = course_matrix[i][j];
-        System.out.println("first_vertex: " + first_vertex);
       }
       first_vertex = 0;
 
@@ -117,7 +117,6 @@ public class SimulatedAnnealingMVC {
           melhorLocal_j = melhorLocal_j + 1;
         }
       }
-      System.out.println("quantidade do i: " + melhorLocal_i + " quantidade do j: " + melhorLocal_j);
 
       if (melhorLocal_i >= melhorLocal_j) {
         current_vertex = first_edge[0];
@@ -125,60 +124,25 @@ public class SimulatedAnnealingMVC {
         current_vertex = first_edge[1];
       }
 
-      // current_vertex = first_edge[random.nextInt(1)];
-      System.out.println("\nfirst_edge[0]: " + first_edge[0]);
-      System.out.println("\nfirst_edge[1]: " + first_edge[1]);
-
       /* Adding current vertex to MVC solution */
       min_vertices_solution = min_vertices_solution + (current_vertex + 1); // passando para index 1
-      System.out.println("vertices: " + min_vertices_solution);
 
       /* Choosing random edges from current_vertex */
       for (int k = 0; k < course_matrix_length; k++) {
         if (course_matrix[current_vertex][k] == 1) {
           course_matrix[current_vertex][k] = 0;
           edges_count = edges_count - 1;
-          System.out.println("\nREMOVENDO current_vertex: " + current_vertex + " e " + k);
-          System.out.println("edges_count: " + edges_count + "\n");
         }
 
         if (course_matrix[k][current_vertex] == 1) {
           course_matrix[k][current_vertex] = 0;
-          System.out.println("REMOVENDO current_vertex: " + k + " e " + current_vertex);
-          System.out.println("edges_count: " + edges_count + "\n");
         }
       }
-      System.out.println("FINAL edges_count: " + edges_count + "\n");
     }
 
-    System.out.println("resultado final: " + min_vertices_solution);
-    System.out.println("-----------------------------------------");
+    solutions++;
+    System.out.println("\nResultado parcial número " + solutions + ": " + min_vertices_solution + "\n");
     return min_vertices_solution;
-  }
-
-  // TODO
-  public int[] generate_neighboor(int[] course) {
-    return course;
-  }
-
-  // TODO
-  public int[] two_opt(int[] route, int i, int j) {
-    int[] vn = new int[route.length];
-
-    for (int c = 0; c < route.length; c++) {
-      vn[c] = route[c];
-    }
-
-    int aux = vn[i];
-    vn[i] = vn[j];
-    vn[j] = aux;
-
-    for (int b = 0; b < vn.length; b++) {
-      System.out.print(vn[b] + " ");
-    }
-    System.out.print(vn[0]);
-
-    return vn;
   }
 
   public int index_1_to_0(int number, int matrix_length) {
