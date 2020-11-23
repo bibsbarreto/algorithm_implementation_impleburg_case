@@ -1,4 +1,4 @@
-# Algorithmic Implementation Impleburg Case
+# Algorithm Implementation Impleburg Case
 
 ### Bianca Ferreira da Frota Barreto
 
